@@ -54,7 +54,7 @@ const Loading = styled.div`
     font-weight: 500;
 `;
 
-const Movies = styled.div`
+export const Movies = styled.div`
     position: relative;
     display: grid;
     grid-template-columns: repeat(4, 1fr);

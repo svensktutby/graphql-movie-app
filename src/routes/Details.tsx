@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { gql, useQuery } from '@apollo/client';
 import styled from 'styled-components';
 
+import Movie, { Poster } from '../components/Movie';
+
 export type MovieType = {
     id: number;
     title: string;
@@ -13,15 +15,26 @@ export type MovieType = {
     genres?: string[];
 };
 
-type PosterProps = {
-    coverImage: string | undefined;
-    $width: string;
-    $height: string;
-};
-
 type ResponseMovie = {
     movie: MovieType;
+    suggestions: MovieType[];
 };
+
+const GET_MOVIE = gql`
+    query getMovie($id: Int!) {
+        movie(id: $id) {
+            title
+            rating
+            description_intro
+            language
+            medium_cover_image
+        }
+        suggestions(id: $id) {
+            id
+            medium_cover_image
+        }
+    }
+`;
 
 const Container = styled.div`
     display: flex;
@@ -38,15 +51,6 @@ const Column = styled.div`
     margin-left: 10px;
 `;
 
-export const Poster = styled.div<PosterProps>`
-    width: ${({ $width }) => $width};
-    height: ${({ $height }) => $height};
-    background-color: transparent;
-    background-size: cover;
-    background-position: center center;
-    background-image: url(${({ coverImage }) => coverImage});
-`;
-
 const Title = styled.h1`
     margin-bottom: 15px;
     font-size: 65px;
@@ -59,21 +63,15 @@ const Description = styled.p`
     font-size: 28px;
 `;
 
-const GET_MOVIE = gql`
-    query getMovie($id: Int!) {
-        movie(id: $id) {
-            title
-            rating
-            description_intro
-            language
-            medium_cover_image
-        }
-    }
+const Suggestions = styled.div`
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 10px;
 `;
 
 const Details: FC = () => {
     const { id } = useParams();
-    const { loading, data } = useQuery<ResponseMovie>(GET_MOVIE, { variables: { id } });
+    const { loading, data } = useQuery<ResponseMovie>(GET_MOVIE, { variables: { id: Number(id) } });
 
     return (
         <Container>
@@ -85,6 +83,11 @@ const Details: FC = () => {
                             {data?.movie?.language} · {data?.movie?.rating}
                         </Subtitle>
                         <Description>{data?.movie?.description_intro}</Description>
+                        <Suggestions>
+                            {data?.suggestions?.map(({ id: sId, medium_cover_image }) => (
+                                <Movie key={sId} id={sId} coverImage={medium_cover_image} />
+                            ))}
+                        </Suggestions>
                     </>
                 )}
             </Column>
