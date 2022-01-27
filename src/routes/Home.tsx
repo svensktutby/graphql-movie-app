@@ -54,6 +54,15 @@ const Loading = styled.div`
     font-weight: 500;
 `;
 
+const Movies = styled.div`
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 25px;
+    width: 60%;
+    top: -50px;
+`;
+
 const Home: FC = () => {
     const { loading, data } = useQuery<ResponseMovies>(GET_MOVIES);
 
@@ -64,7 +73,13 @@ const Home: FC = () => {
                 <Subtitle>Movies database on React, Apollo, GraphQL</Subtitle>
             </Header>
             {loading && <Loading>Loading..</Loading>}
-            {!loading && data?.movies.map((movie) => <Movie key={movie.id} id={movie.id} />)}
+            {!loading && (
+                <Movies>
+                    {data?.movies?.map(({ id, medium_cover_image }) => (
+                        <Movie key={id} id={id} coverImage={medium_cover_image} />
+                    ))}
+                </Movies>
+            )}
         </Container>
     );
 };
