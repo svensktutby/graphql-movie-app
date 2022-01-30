@@ -15,6 +15,7 @@ const GET_MOVIES = gql`
             id
             title
             medium_cover_image
+            isLiked @client
         }
     }
 `;
@@ -75,8 +76,8 @@ const Home: FC = () => {
             {loading && <Loading>Loading..</Loading>}
             {!loading && (
                 <Movies>
-                    {data?.movies?.map(({ id, medium_cover_image }) => (
-                        <Movie key={id} id={id} coverImage={medium_cover_image} />
+                    {data?.movies?.map(({ id, medium_cover_image, isLiked }) => (
+                        <Movie key={id} id={id} coverImage={medium_cover_image} isLiked={isLiked} />
                     ))}
                 </Movies>
             )}

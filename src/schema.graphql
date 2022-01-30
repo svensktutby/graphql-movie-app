@@ -1,3 +1,5 @@
+directive @client on FIELD
+
 type Movie {
     id: Int!
     title: String!
@@ -6,10 +8,20 @@ type Movie {
     medium_cover_image: String
     description_intro: String
     genres: [String]
+    isLiked: Boolean
+}
+
+input MovieInput {
+    id: Int!
+    isLiked: Boolean
 }
 
 type Query {
     movies(limit: Int, rating: Float): [Movie]!
     movie(id: Int!): Movie
     suggestions(id: Int!): [Movie]!
+}
+
+type Mutation {
+    toggleLikeMovie(, props: MovieInput): Boolean
 }

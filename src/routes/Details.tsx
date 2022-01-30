@@ -13,6 +13,7 @@ export type MovieType = {
     language?: string;
     medium_cover_image?: string;
     genres?: string[];
+    isLiked: boolean;
 };
 
 type ResponseMovie = {
@@ -23,11 +24,13 @@ type ResponseMovie = {
 const GET_MOVIE = gql`
     query getMovie($id: Int!) {
         movie(id: $id) {
+            id
             title
             rating
             description_intro
             language
             medium_cover_image
+            isLiked @client
         }
         suggestions(id: $id) {
             id
@@ -76,7 +79,9 @@ const Details: FC = () => {
     return (
         <Container>
             <Column>
-                <Title>{loading ? <>Loading...</> : data?.movie?.title}</Title>
+                <Title>
+                    {loading ? <>Loading...</> : `${data?.movie?.title} ${data?.movie?.isLiked ? '❤️' : '😥'} `}
+                </Title>
                 {!loading && (
                     <>
                         <Subtitle>
@@ -85,7 +90,7 @@ const Details: FC = () => {
                         <Description>{data?.movie?.description_intro}</Description>
                         <Suggestions>
                             {data?.suggestions?.map(({ id: sId, medium_cover_image }) => (
-                                <Movie key={sId} id={sId} coverImage={medium_cover_image} />
+                                <Movie key={sId} id={sId} coverImage={medium_cover_image} isLiked={true} />
                             ))}
                         </Suggestions>
                     </>
